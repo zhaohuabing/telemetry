@@ -134,7 +134,9 @@ func (s *scope) With(keyValuePairs ...interface{}) telemetry.Logger {
 			sc.kvs = append(sc.kvs, k, keyValuePairs[i+1])
 		}
 	}
+	lock.Lock()
 	uninitialized[s.name] = append(uninitialized[s.name], sc)
+	lock.Unlock()
 
 	return sc
 }
@@ -147,7 +149,9 @@ func (s *scope) Context(ctx context.Context) telemetry.Logger {
 
 	sc := s.Clone()
 	sc.(*scope).ctx = ctx
+	lock.Lock()
 	uninitialized[s.name] = append(uninitialized[s.name], sc.(*scope))
+	lock.Unlock()
 	return sc
 }
 
@@ -159,7 +163,9 @@ func (s *scope) Metric(m telemetry.Metric) telemetry.Logger {
 
 	sc := s.Clone()
 	sc.(*scope).metric = m
+	lock.Lock()
 	uninitialized[s.name] = append(uninitialized[s.name], sc.(*scope))
+	lock.Unlock()
 	return sc
 }
 
